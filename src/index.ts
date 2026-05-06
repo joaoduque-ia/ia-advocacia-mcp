@@ -3,6 +3,28 @@ import { McpAgent } from "agents/mcp";
 import { z } from "zod";
 
 // ============================================================
+// LISTA DE TOKENS AUTORIZADOS
+// ============================================================
+// Para adicionar novo aluno: adicione uma linha aqui com identificador unico.
+// Para revogar acesso: comente a linha (//) ou apague.
+// Apos qualquer alteracao, salve o arquivo (commit) que a Cloudflare
+// faz redeploy automatico em 1-2 minutos.
+
+const TOKENS_AUTORIZADOS: Record<string, string> = {
+	// Padrao: "tok_TIPO_NOME_VALIDADE": "Descricao para sua referencia"
+	"tok_admin_joao_perpetuo": "Joao - acesso administrativo (voce mesmo)",
+	"tok_escritorio_1_122026": "Escritorio 1 - validade ate 12/2026",
+	"tok_escritorio_2_122026": "Escritorio 2 - validade ate 12/2026",
+	"tok_escritorio_3_122026": "Escritorio 3 - validade ate 12/2026",
+	"tok_escritorio_4_122026": "Escritorio 4 - validade ate 12/2026",
+	"tok_escritorio_5_122026": "Escritorio 5 - validade ate 12/2026",
+	"tok_curso_aluno_1_062027": "Aluno 1 - curso turma 2026 (validade 06/2027)",
+	"tok_curso_aluno_2_062027": "Aluno 2 - curso turma 2026 (validade 06/2027)",
+	"tok_curso_aluno_3_062027": "Aluno 3 - curso turma 2026 (validade 06/2027)",
+	"tok_curso_aluno_4_062027": "Aluno 4 - curso turma 2026 (validade 06/2027)",
+};
+
+// ============================================================
 // PROTOCOLOS COMPARTILHADOS
 // ============================================================
 
@@ -27,8 +49,7 @@ REGRAS OBRIGATORIAS:
 - NAO use emojis
 - NAO use travessao (em dash, simbolo "-")
 - NAO ative a lousa, exceto se solicitado expressamente
-- Cite jurisprudencia somente apos pesquisa na internet, com link da
-  fonte para verificacao
+- Cite jurisprudencia somente apos pesquisa na internet, com link da fonte para verificacao
 - NAO cite doutrina
 `;
 
@@ -41,8 +62,7 @@ seguindo OBRIGATORIAMENTE a sequencia abaixo nos seguintes sites:
 2. SITE: stf.jus.br
 3. SITE: lexml.gov.br
 4. SITE: dizerodireito.com.br
-5. SITE: jusbrasil.com.br (apenas se os anteriores nao retornarem
-   resultados suficientes)
+5. SITE: jusbrasil.com.br (apenas se os anteriores nao retornarem resultados suficientes)
 
 Para CADA julgado encontrado:
 - Apresente a ementa no formato das publicacoes oficiais.
@@ -74,61 +94,26 @@ versao anterior.
 
 const PROTOCOLO_ANALISE_CLASSICA = `
 PROTOCOLO DE ANALISE JURIDICA CLASSICA:
-
 ESTRUTURA OBRIGATORIA:
 
-1. DADOS DO PROCESSO
-   - Tribunal
-   - Tipo de Recurso ou Acao
-   - Numero do Processo (se aplicavel)
-   - Relator (se aplicavel)
+1. DADOS DO PROCESSO: Tribunal, Tipo de Recurso ou Acao, Numero do Processo, Relator.
+2. FATOS: Breve narrativa dos fatos relevantes, partes envolvidas e natureza do litigio.
+3. PROBLEMA JURIDICO: Questao Central e Pontos Controvertidos.
+4. DIREITO APLICAVEL: Enumere artigos da Constituicao, leis complementares, leis ordinarias, decretos. PESQUISE no site https://www.lexml.gov.br/ e cite os artigos com transcricao, leis e jurisprudencia relevantes, com link para verificacao.
+5. ANALISE E APLICACAO: Argumentos e Provas das Partes; Aplicacao da Norma com analise critica.
+6. CONCLUSAO: Resumo da analise, aplicacao da legislacao e jurisprudencia, conclusao sobre a legalidade. Resumo de precedentes (PESQUISE na internet).
 
-2. FATOS
-   - Breve narrativa dos fatos relevantes do caso, incluindo as partes
-     envolvidas e a natureza do litigio.
-
-3. PROBLEMA JURIDICO
-   - Questao Central: descricao da questao juridica principal
-   - Pontos Controvertidos:
-     (a) ponto controvertido 1
-     (b) ponto controvertido 2
-     (c) outros pontos conforme necessario
-
-4. DIREITO APLICAVEL
-   - Enumere as legislacoes pertinentes: artigos da Constituicao, leis
-     complementares, leis ordinarias, decretos e demais regulamentos.
-   - PESQUISE no site https://www.lexml.gov.br/ e cite os artigos com
-     transcricao, leis e jurisprudencia relevantes, apresentando o link
-     para verificacao.
-
-5. ANALISE E APLICACAO
-   - Argumentos e Provas da Parte 1
-   - Argumentos e Provas da Parte 2
-   - Aplicacao da Norma: analise critica dos argumentos com base no
-     direito aplicavel e na jurisprudencia predominante.
-
-6. CONCLUSAO
-   - Resumo da analise, destacando a aplicacao da legislacao e
-     jurisprudencia ao caso.
-   - Conclusao sobre a legalidade das acoes das partes.
-   - Resumo de precedentes que se aplicam ao caso (PESQUISE na internet).
-
-LINGUAGEM: tecnica e especializada. Vocabulario juridico avancado.
-Precisao e clareza. Terminologias especificas do campo do Direito.
-Evite ambiguidades.
+LINGUAGEM: tecnica e especializada, vocabulario juridico avancado, precisao e clareza.
 `;
 
 const PROTOCOLO_APROFUNDAMENTO_FINAL = `
 PROTOCOLO DE APROFUNDAMENTO FINAL:
-
 PERGUNTE ao usuario:
 - Voce deseja aprofundar algum ponto especifico?
 - Quer acrescentar algo?
 
 Se SIM, PERGUNTE qual ponto e desenvolva conforme solicitado.
-Se NAO, peca para o usuario responder explicitamente que nao deseja
-aprofundamentos adicionais.
-
+Se NAO, peca para o usuario responder explicitamente que nao deseja aprofundamentos adicionais.
 Procedimento concluido.
 `;
 
@@ -139,11 +124,24 @@ sugira ao usuario o uso do robo de relatorio:
 https://chatgpt.com/g/g-xXpAwSUrl-relatorio-do-assessor-juridico
 
 Esse robo auxilia na consolidacao das pecas processuais em um relatorio
-unico que pode ser colado como contexto, otimizando a analise.
+unico que pode ser colado como contexto.
 `;
 
-// Helper para retornar texto
+// ============================================================
+// HELPERS
+// ============================================================
+
 const text = (s: string) => ({ content: [{ type: "text" as const, text: s }] });
+
+function logUso(token: string, ferramenta: string, etapa: string) {
+	const identificador = TOKENS_AUTORIZADOS[token] || "DESCONHECIDO";
+	console.log(`[USO] token=${token.substring(0, 20)}... | usuario="${identificador}" | tool=${ferramenta} | etapa=${etapa} | ts=${new Date().toISOString()}`);
+}
+
+function tokenValido(token: string | undefined): boolean {
+	if (!token) return false;
+	return token in TOKENS_AUTORIZADOS;
+}
 
 // ============================================================
 // MCP AGENT
@@ -151,390 +149,323 @@ const text = (s: string) => ({ content: [{ type: "text" as const, text: s }] });
 
 export class MyMCP extends McpAgent {
 	server = new McpServer({
-		name: "IA para Escritorios de Advocacia",
-		version: "1.0.0",
+		name: "Inteligencia Artificial para Escritorios de Advocacia",
+		version: "2.0.0",
 	});
 
 	async init() {
 
 		// ============================================================
-		// PETICAO INICIAL (6 passos)
+		// MENU INICIAL
 		// ============================================================
-
 		this.server.registerTool(
-			"peticao_inicial_iniciar",
+			"menu_inicial",
 			{
-				description: "Inicia o procedimento de elaboracao de peticao inicial. Use sempre que o usuario pedir ajuda para fazer uma peticao inicial, propor uma acao judicial, ou iniciar uma demanda. Procedimento guiado em 6 passos.",
+				description: "Apresenta o menu de procedimentos disponiveis no assessor juridico. Use sempre que o usuario disser 'menu', 'ajuda', 'ola', 'comandos disponiveis', 'o que voce faz', ou similar.",
 				inputSchema: {},
 			},
-			async () => text(`${PROTOCOLO_PERSONA_JURIDICA}
+			async () => text(`Bem-vindo ao Assessor Juridico no Claude.
 
-PROCEDIMENTO: Peticao Inicial - Passo 1 de 6.
+PROCEDIMENTOS DISPONIVEIS (digite o que precisa em linguagem natural):
 
-Avise ao usuario que sao 6 passos para finalizar o procedimento.
+1. PETICAO INICIAL (6 etapas): "preciso fazer uma peticao inicial"
+2. CONTESTACAO (6 etapas): "preciso fazer uma contestacao"
+3. REPLICA (6 etapas): "preciso fazer uma replica"
+4. RECURSO (7 etapas): "preciso fazer um recurso"
+5. CONTRARRAZOES (7 etapas): "preciso de contrarrazoes ao recurso"
+6. ALEGACOES FINAIS (7 etapas): "preciso de alegacoes finais"
+7. AUDIENCIA (9 etapas): "preciso me preparar para audiencia"
+8. JURI (3 etapas): "vou ao tribunal do juri"
+9. SUSTENTACAO ORAL (2 etapas): "preciso de sustentacao oral"
+10. JURISPRUDENCIA: "pesquise jurisprudencia sobre [tema]"
+11. ANALISE JURIDICA (2 etapas): "faca analise juridica deste caso"
+12. CORRECAO DE TEXTO (4 etapas): "corrija este texto"
+13. EXPLICAR EM LINGUAGEM SIMPLES (2 etapas): "explique para meu cliente"
+14. OUTROS (4 etapas): "preciso fazer [descreva]"
 
-NAO ative a lousa durante todo o procedimento, exceto se solicitado expressamente.
+ATALHOS COM HASHTAG (alternativa para uso rapido):
+#peticaoinicial #contestacao #replica #recurso #contrarrazoes
+#alegacoesfinais #audiencia #juri #sustentacaooral #jurisprudencia
+#analisejuridica #correcaotexto #linguagemsimples #outros
 
-PERGUNTE ao usuario:
+Para iniciar, basta escrever sua necessidade. O assistente reconhece e inicia o procedimento.
+`),
+		);
+
+		// ============================================================
+		// PETICAO INICIAL
+		// ============================================================
+		this.server.registerTool(
+			"peticao_inicial",
+			{
+				description: "Procedimento de elaboracao de peticao inicial para iniciar acao judicial. Use quando o usuario quiser fazer peticao inicial, propor acao, iniciar demanda. 6 etapas. Comece sempre com etapa='1_inicio'.",
+				inputSchema: {
+					etapa: z.enum([
+						"1_inicio",
+						"2_perguntas_documentos",
+						"3_elaboracao",
+						"4_aprofundamento",
+						"5_jurisprudencia",
+						"6_finalizar"
+					]).describe("Etapa do procedimento. Comece com '1_inicio' e avance sequencialmente."),
+				},
+			},
+			async ({ etapa }) => {
+				const conteudos: Record<string, string> = {
+					"1_inicio": `${PROTOCOLO_PERSONA_JURIDICA}
+
+PROCEDIMENTO: PETICAO INICIAL - Etapa 1 de 6 (inicio).
+ESTADO: voce esta na primeira etapa do procedimento de peticao inicial.
+Avise ao usuario que sao 6 etapas para finalizar o procedimento.
+NAO ative a lousa, exceto se solicitado.
+
+PERGUNTE:
 - Qual o ramo do direito envolvido?
 - Qual tipo de acao (incluindo se ha pedido de antecipacao de tutela)?
 - Qual a motivacao da acao?
 
-Sugira o seguinte modelo de comando para o usuario copiar e adaptar:
+Sugira o modelo de comando:
+"Preciso entrar com uma acao que envolve direito XXXXX. Uma acao de XXXX com pedido de XXXX de uma cliente XXXX contra XXXXX em razao XXXXXXXX. Pode me ajudar, sobretudo indicando quais perguntas e provas meu cliente deve responder e orientacoes juridicas que devo realizar?"
 
-"Preciso entrar com uma acao que envolve direito XXXXX. Uma acao de XXXX
-com pedido de XXXX de uma cliente XXXX contra XXXXX em razao XXXXXXXX.
-Pode me ajudar, sobretudo indicando quais perguntas e provas meu cliente
-deve responder e orientacoes juridicas que devo realizar?"
+PROXIMA ACAO: apos a resposta do usuario, chame peticao_inicial com etapa='2_perguntas_documentos'.`,
 
-Apos receber a resposta do usuario, chame a ferramenta peticao_inicial_passo2.`),
-		);
+					"2_perguntas_documentos": `PROCEDIMENTO: PETICAO INICIAL - Etapa 2 de 6 (perguntas e documentos).
 
-		this.server.registerTool(
-			"peticao_inicial_passo2",
-			{
-				description: "Passo 2 do procedimento de peticao inicial.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Peticao Inicial - Passo 2 de 6.
+SOLICITE que o usuario responda o maximo de perguntas geradas por voce na etapa anterior.
+No final, ORIENTE sobre quais documentos o cliente deve apresentar e indique estrategias para o exito da acao.
 
-SOLICITE que o usuario responda o maximo de perguntas geradas por voce
-no passo anterior.
+PROXIMA ACAO: apos receber as respostas, chame peticao_inicial com etapa='3_elaboracao'.`,
 
-No final, ORIENTE sobre quais documentos o cliente deve apresentar e
-indique estrategias para o exito da acao.
+					"3_elaboracao": `PROCEDIMENTO: PETICAO INICIAL - Etapa 3 de 6 (elaboracao).
 
-Apos receber as respostas, chame peticao_inicial_passo3.`),
-		);
-
-		this.server.registerTool(
-			"peticao_inicial_passo3",
-			{
-				description: "Passo 3 do procedimento de peticao inicial. Elaboracao da peca.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Peticao Inicial - Passo 3 de 6.
-
-ELABORE a peticao inicial seguindo as orientacoes:
+ELABORE a peticao inicial:
 - Faca em partes e obedeca aos requisitos formais.
 - NAO use a lousa.
-- No cabecalho, enderece a acao ao "JUIZO DE DIREITO XXX" em vez de
-  "EXCELENTISSIMO SENHOR DOUTOR JUIZ DE DIREITO".
+- No cabecalho, enderece a acao ao "JUIZO DE DIREITO XXX" em vez de "EXCELENTISSIMO SENHOR DOUTOR JUIZ DE DIREITO".
 
 ${PROTOCOLO_PERSONA_JURIDICA}
 
-Apos elaborar a peca, chame peticao_inicial_passo4.`),
-		);
+PROXIMA ACAO: apos elaborar, chame peticao_inicial com etapa='4_aprofundamento'.`,
 
-		this.server.registerTool(
-			"peticao_inicial_passo4",
-			{
-				description: "Passo 4 do procedimento de peticao inicial. Aprofundamento dos topicos.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Peticao Inicial - Passo 4 de 6.
+					"4_aprofundamento": `PROCEDIMENTO: PETICAO INICIAL - Etapa 4 de 6 (aprofundamento).
 
 ${PROTOCOLO_DESENVOLVIMENTO_APROFUNDADO}
 
-IMPORTANTE: nesta etapa nao cite jurisprudencia nem doutrina ainda.
+IMPORTANTE: nesta etapa NAO cite jurisprudencia nem doutrina ainda.
 Apenas transcreva os artigos mencionados citando a fonte do site do Planalto.
 
-Apos concluir, chame peticao_inicial_passo5.`),
-		);
+PROXIMA ACAO: apos concluir, chame peticao_inicial com etapa='5_jurisprudencia'.`,
 
-		this.server.registerTool(
-			"peticao_inicial_passo5",
-			{
-				description: "Passo 5 do procedimento de peticao inicial. Pesquisa de jurisprudencia.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Peticao Inicial - Passo 5 de 6.
+					"5_jurisprudencia": `PROCEDIMENTO: PETICAO INICIAL - Etapa 5 de 6 (jurisprudencia).
 
 PERGUNTE ao usuario se deseja continuar para a pesquisa de JURISPRUDENCIA.
-Se sim, prossiga. Se nao, pule para o passo 6.
+Se sim, prossiga. Se nao, va direto para a etapa 6.
 
 ${PROTOCOLO_J7}
 
-Apos a pesquisa, chame peticao_inicial_passo6.`),
-		);
+PROXIMA ACAO: apos a pesquisa, chame peticao_inicial com etapa='6_finalizar'.`,
 
-		this.server.registerTool(
-			"peticao_inicial_passo6",
-			{
-				description: "Passo 6 (final) do procedimento de peticao inicial.",
-				inputSchema: {},
+					"6_finalizar": `PROCEDIMENTO: PETICAO INICIAL - Etapa 6 de 6 (FINAL).
+
+${PROTOCOLO_APROFUNDAMENTO_FINAL}`,
+				};
+				return text(conteudos[etapa]);
 			},
-			async () => text(`PROCEDIMENTO: Peticao Inicial - Passo 6 de 6 (FINAL).
-
-${PROTOCOLO_APROFUNDAMENTO_FINAL}`),
 		);
 
 		// ============================================================
-		// CONTESTACAO (6 passos)
+		// CONTESTACAO
 		// ============================================================
-
 		this.server.registerTool(
-			"contestacao_iniciar",
+			"contestacao",
 			{
-				description: "Inicia o procedimento de elaboracao de contestacao. Use sempre que o usuario pedir ajuda para contestar uma acao, fazer defesa em processo civel, ou responder a peticao inicial. Procedimento em 6 passos.",
-				inputSchema: {},
+				description: "Procedimento de elaboracao de contestacao para defender em acao civel. Use quando o usuario quiser contestar, fazer defesa, responder peticao inicial. 6 etapas. Comece com etapa='1_inicio'.",
+				inputSchema: {
+					etapa: z.enum([
+						"1_inicio",
+						"2_analise",
+						"3_elaboracao",
+						"4_aprofundamento",
+						"5_jurisprudencia",
+						"6_finalizar"
+					]).describe("Etapa do procedimento. Comece com '1_inicio' e avance sequencialmente."),
+				},
 			},
-			async () => text(`${PROTOCOLO_PERSONA_JURIDICA}
+			async ({ etapa }) => {
+				const conteudos: Record<string, string> = {
+					"1_inicio": `${PROTOCOLO_PERSONA_JURIDICA}
 
-PROCEDIMENTO: Contestacao - Passo 1 de 6.
+PROCEDIMENTO: CONTESTACAO - Etapa 1 de 6 (inicio).
+ESTADO: voce esta iniciando o procedimento de contestacao.
+Avise que sao 6 etapas. NAO ative a lousa.
 
-Avise ao usuario que sao 6 passos para finalizar o procedimento.
+SOLICITE upload da peticao inicial da parte autora e eventuais decisoes ja proferidas.
+NAO antecipe etapas seguintes.
 
-NAO ative a lousa durante todo o procedimento, exceto se solicitado expressamente.
+PROXIMA ACAO: apos o upload, chame contestacao com etapa='2_analise'.`,
 
-SOLICITE que o usuario faca upload da peticao inicial da parte autora e
-eventuais decisoes ja proferidas no processo.
+					"2_analise": `PROCEDIMENTO: CONTESTACAO - Etapa 2 de 6 (analise juridica).
 
-NAO antecipe os proximos passos. Seja obediente ao fluxo.
-
-Apos o upload, chame contestacao_passo2.`),
-		);
-
-		this.server.registerTool(
-			"contestacao_passo2",
-			{
-				description: "Passo 2 do procedimento de contestacao. Analise juridica preparatoria.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Contestacao - Passo 2 de 6.
-
-FACA uma analise juridica detalhada do caso anexado, com objetivo de
-preparar a contestacao nos passos posteriores.
+FACA uma analise juridica detalhada do caso anexado para preparar a contestacao.
 
 ${PROTOCOLO_ANALISE_CLASSICA}
 
-Ao final da analise, INDIQUE:
-- Quais perguntas o cliente deve responder.
-- Quais provas e documentos podem ser produzidos no sentido da defesa.
-- Eventual legislacao especifica aplicavel.
-- Possiveis versoes dos fatos a serem sustentadas.
+Ao final, INDIQUE:
+- Perguntas que o cliente deve responder.
+- Provas e documentos que podem ser produzidos.
+- Legislacao especifica aplicavel.
+- Possiveis versoes dos fatos.
 
-Apos apresentar, chame contestacao_passo3.`),
-		);
+PROXIMA ACAO: chame contestacao com etapa='3_elaboracao'.`,
 
-		this.server.registerTool(
-			"contestacao_passo3",
-			{
-				description: "Passo 3 do procedimento de contestacao. Modelo de comando e elaboracao.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Contestacao - Passo 3 de 6.
+					"3_elaboracao": `PROCEDIMENTO: CONTESTACAO - Etapa 3 de 6 (elaboracao).
 
-SUGIRA o seguinte modelo de comando ao usuario, ja preenchendo com o
-contexto da conversa quando possivel:
+SUGIRA o modelo de comando, ja preenchendo com o contexto:
+"Preciso que voce faca a contestacao em favor da parte re XXXX em razao da peticao inicial proposta por XXXXXX. Preciso que na contestacao desenvolva todas as PRELIMINARES cabiveis. Conteste todos os fatos e argumentos juridicos da peticao inicial, especialmente os pontos XXXXXX, isso porque XXXXXX. Utilize tambem argumentos em anexo. Faca em partes."
 
-"Preciso que voce faca a contestacao em favor da parte re XXXX em razao
-da peticao inicial proposta por XXXXXX. Preciso que na contestacao
-desenvolva todas as PRELIMINARES cabiveis. Conteste todos os fatos e
-argumentos juridicos da peticao inicial (com base nas respostas e versao
-dos fatos), especialmente os pontos XXXXXX, isso porque XXXXXX. Utilize
-tambem argumentos em anexo. Faca em partes."
+Apos o usuario fornecer o comando, ELABORE a contestacao em partes.
 
-Apos o usuario fornecer o comando preenchido, ELABORE a contestacao em partes.
+PROXIMA ACAO: chame contestacao com etapa='4_aprofundamento'.`,
 
-Apos concluir, chame contestacao_passo4.`),
-		);
-
-		this.server.registerTool(
-			"contestacao_passo4",
-			{
-				description: "Passo 4 do procedimento de contestacao. Aprofundamento dos topicos.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Contestacao - Passo 4 de 6.
+					"4_aprofundamento": `PROCEDIMENTO: CONTESTACAO - Etapa 4 de 6 (aprofundamento).
 
 ${PROTOCOLO_DESENVOLVIMENTO_APROFUNDADO}
 
 Tambem TRANSCREVA os artigos mencionados citando a fonte do site do Planalto.
 
-Apos concluir, chame contestacao_passo5.`),
-		);
+PROXIMA ACAO: chame contestacao com etapa='5_jurisprudencia'.`,
 
-		this.server.registerTool(
-			"contestacao_passo5",
-			{
-				description: "Passo 5 do procedimento de contestacao. Pesquisa de jurisprudencia.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Contestacao - Passo 5 de 6.
+					"5_jurisprudencia": `PROCEDIMENTO: CONTESTACAO - Etapa 5 de 6 (jurisprudencia).
 
-PERGUNTE ao usuario se deseja continuar para a pesquisa de JURISPRUDENCIA.
+PERGUNTE se deseja continuar para a pesquisa de JURISPRUDENCIA.
 
 ${PROTOCOLO_J7}
 
-Apos a pesquisa, chame contestacao_passo6.`),
-		);
+PROXIMA ACAO: chame contestacao com etapa='6_finalizar'.`,
 
-		this.server.registerTool(
-			"contestacao_passo6",
-			{
-				description: "Passo 6 (final) do procedimento de contestacao.",
-				inputSchema: {},
+					"6_finalizar": `PROCEDIMENTO: CONTESTACAO - Etapa 6 de 6 (FINAL).
+
+${PROTOCOLO_APROFUNDAMENTO_FINAL}`,
+				};
+				return text(conteudos[etapa]);
 			},
-			async () => text(`PROCEDIMENTO: Contestacao - Passo 6 de 6 (FINAL).
-
-${PROTOCOLO_APROFUNDAMENTO_FINAL}`),
 		);
 
 		// ============================================================
-		// REPLICA (6 passos)
+		// REPLICA
 		// ============================================================
-
 		this.server.registerTool(
-			"replica_iniciar",
+			"replica",
 			{
-				description: "Inicia o procedimento de elaboracao de replica. Use quando o usuario pedir ajuda para fazer replica em processo civel, rebater contestacao, ou responder defesa da parte adversa. Procedimento em 6 passos.",
-				inputSchema: {},
+				description: "Procedimento de elaboracao de replica para rebater contestacao em processo civel. Use quando o usuario quiser fazer replica, rebater defesa adversa. 6 etapas. Comece com etapa='1_inicio'.",
+				inputSchema: {
+					etapa: z.enum([
+						"1_inicio",
+						"2_analise",
+						"3_elaboracao",
+						"4_aprofundamento",
+						"5_jurisprudencia",
+						"6_finalizar"
+					]).describe("Etapa do procedimento."),
+				},
 			},
-			async () => text(`${PROTOCOLO_PERSONA_JURIDICA}
+			async ({ etapa }) => {
+				const conteudos: Record<string, string> = {
+					"1_inicio": `${PROTOCOLO_PERSONA_JURIDICA}
 
-PROCEDIMENTO: Replica - Passo 1 de 6.
+PROCEDIMENTO: REPLICA - Etapa 1 de 6 (inicio).
+Avise que sao 6 etapas. NAO ative a lousa.
 
-Avise que sao 6 passos. NAO ative a lousa.
+SOLICITE upload da peticao inicial, eventuais decisoes e contestacao da parte re.
 
-SOLICITE upload da peticao inicial da parte autora, eventuais decisoes
-e contestacao da parte re. Faca uma analise juridica detalhada do caso.
+PROXIMA ACAO: apos o upload, chame replica com etapa='2_analise'.`,
 
-Apos o upload, chame replica_passo2.`),
-		);
+					"2_analise": `PROCEDIMENTO: REPLICA - Etapa 2 de 6 (analise).
 
-		this.server.registerTool(
-			"replica_passo2",
-			{
-				description: "Passo 2 do procedimento de replica. Analise juridica.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Replica - Passo 2 de 6.
-
-FACA uma analise juridica detalhada do caso, com objetivo de preparar
-uma replica no sentido de rebater os argumentos da contestacao e manter
-os argumentos da peticao inicial.
+FACA uma analise juridica detalhada do caso, com objetivo de preparar replica para rebater os argumentos da contestacao e manter os argumentos da peticao inicial.
 
 ${PROTOCOLO_ANALISE_CLASSICA}
 
-Apos apresentar, chame replica_passo3.`),
-		);
+PROXIMA ACAO: chame replica com etapa='3_elaboracao'.`,
 
-		this.server.registerTool(
-			"replica_passo3",
-			{
-				description: "Passo 3 do procedimento de replica.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Replica - Passo 3 de 6.
+					"3_elaboracao": `PROCEDIMENTO: REPLICA - Etapa 3 de 6 (elaboracao).
 
-SUGIRA o seguinte modelo de comando, ja preenchendo com o contexto:
+SUGIRA o modelo de comando:
+"Preciso que voce faca a replica em favor da parte autora XXXX em razao da contestacao proposta por XXXXXX. Preciso que na replica rebata os argumentos da contestacao que se contrapoem aos argumentos da peticao inicial, especialmente os pontos XXXXXX, isso porque XXXXXX. Utilize tambem argumentos da peticao inicial em anexo."
 
-"Preciso que voce faca a replica em favor da parte autora XXXX em razao
-da contestacao proposta por XXXXXX. Preciso que na replica rebata os
-argumentos da contestacao que se contrapoem aos argumentos da peticao
-inicial, especialmente os pontos XXXXXX, isso porque XXXXXX. Utilize
-tambem argumentos da peticao inicial em anexo."
+ELABORE a replica.
 
-Apos o comando, ELABORE a replica.
+PROXIMA ACAO: chame replica com etapa='4_aprofundamento'.`,
 
-Apos concluir, chame replica_passo4.`),
-		);
-
-		this.server.registerTool(
-			"replica_passo4",
-			{
-				description: "Passo 4 do procedimento de replica. Aprofundamento.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Replica - Passo 4 de 6.
+					"4_aprofundamento": `PROCEDIMENTO: REPLICA - Etapa 4 de 6 (aprofundamento).
 
 ${PROTOCOLO_DESENVOLVIMENTO_APROFUNDADO}
 
 Tambem TRANSCREVA os artigos mencionados citando a fonte do site do Planalto.
 
-Apos concluir, chame replica_passo5.`),
-		);
+PROXIMA ACAO: chame replica com etapa='5_jurisprudencia'.`,
 
-		this.server.registerTool(
-			"replica_passo5",
-			{
-				description: "Passo 5 do procedimento de replica. Jurisprudencia.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Replica - Passo 5 de 6.
+					"5_jurisprudencia": `PROCEDIMENTO: REPLICA - Etapa 5 de 6 (jurisprudencia).
 
-PERGUNTE ao usuario se deseja continuar para a pesquisa de JURISPRUDENCIA.
+PERGUNTE se deseja continuar para a pesquisa de JURISPRUDENCIA.
 
 ${PROTOCOLO_J7}
 
-Apos a pesquisa, chame replica_passo6.`),
-		);
+PROXIMA ACAO: chame replica com etapa='6_finalizar'.`,
 
-		this.server.registerTool(
-			"replica_passo6",
-			{
-				description: "Passo 6 (final) do procedimento de replica.",
-				inputSchema: {},
+					"6_finalizar": `PROCEDIMENTO: REPLICA - Etapa 6 de 6 (FINAL).
+
+${PROTOCOLO_APROFUNDAMENTO_FINAL}`,
+				};
+				return text(conteudos[etapa]);
 			},
-			async () => text(`PROCEDIMENTO: Replica - Passo 6 de 6 (FINAL).
-
-${PROTOCOLO_APROFUNDAMENTO_FINAL}`),
 		);
 
 		// ============================================================
-		// RECURSO (7 passos)
+		// RECURSO
 		// ============================================================
-
 		this.server.registerTool(
-			"recurso_iniciar",
+			"recurso",
 			{
-				description: "Inicia o procedimento de elaboracao de recurso (apelacao, agravo, recurso especial, recurso extraordinario, etc.). Use quando o usuario quiser recorrer de uma decisao judicial. Procedimento em 7 passos.",
-				inputSchema: {},
+				description: "Procedimento de elaboracao de recurso (apelacao, agravo, recurso especial, extraordinario, etc.). Use quando o usuario quiser recorrer de decisao judicial. 7 etapas. Comece com etapa='1_inicio'.",
+				inputSchema: {
+					etapa: z.enum([
+						"1_inicio",
+						"2_analise",
+						"3_definicao",
+						"4_elaboracao",
+						"5_aprofundamento",
+						"6_jurisprudencia",
+						"7_finalizar"
+					]).describe("Etapa do procedimento."),
+				},
 			},
-			async () => text(`${PROTOCOLO_PERSONA_JURIDICA}
+			async ({ etapa }) => {
+				const conteudos: Record<string, string> = {
+					"1_inicio": `${PROTOCOLO_PERSONA_JURIDICA}
 
-PROCEDIMENTO: Recurso - Passo 1 de 7.
+PROCEDIMENTO: RECURSO - Etapa 1 de 7 (inicio).
+Avise que sao 7 etapas. Use a lousa SOMENTE quando solicitado.
 
-Avise que sao 7 passos. Use a lousa SOMENTE quando solicitado expressamente.
-
-Antes de executar, PECA o upload das principais pecas processuais
-separadamente OU a insercao do relatorio do processo gerado no Robo
-exclusivo de relatorio (PREFIRA essa opcao).
+PECA upload das principais pecas processuais separadamente OU insercao do relatorio do processo (PREFIRA essa opcao).
 
 ${PROTOCOLO_ROBO_RELATORIO}
 
-Apos o upload, chame recurso_passo2.`),
-		);
+PROXIMA ACAO: apos o upload, chame recurso com etapa='2_analise'.`,
 
-		this.server.registerTool(
-			"recurso_passo2",
-			{
-				description: "Passo 2 do procedimento de recurso.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Recurso - Passo 2 de 7.
+					"2_analise": `PROCEDIMENTO: RECURSO - Etapa 2 de 7 (analise juridica).
 
-PERGUNTE qual o nome da parte que esta sendo defendida.
+PERGUNTE o nome da parte que esta sendo defendida.
 
-Em seguida, FACA uma analise juridica detalhada do caso com objetivo
-de preparar um recurso.
+FACA analise juridica detalhada do caso para preparar o recurso.
 
 ${PROTOCOLO_ANALISE_CLASSICA}
 
-AVISE para que o usuario clique no nome superior do robo e altere para
-o "modelo" de raciocinio mais profundo (extended thinking).
+AVISE para que o usuario altere para o "modelo" de raciocinio mais profundo (extended thinking).
 
-Apos apresentar a analise, chame recurso_passo3.`),
-		);
+PROXIMA ACAO: chame recurso com etapa='3_definicao'.`,
 
-		this.server.registerTool(
-			"recurso_passo3",
-			{
-				description: "Passo 3 do procedimento de recurso. Definicao do recurso e fundamentos.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Recurso - Passo 3 de 7.
+					"3_definicao": `PROCEDIMENTO: RECURSO - Etapa 3 de 7 (definicao do recurso).
 
 PERGUNTE:
 - Qual recurso o usuario deseja realizar?
@@ -542,33 +473,20 @@ PERGUNTE:
 - Contra qual decisao?
 - Sob quais fundamentos?
 
-SUGIRA o seguinte modelo de comando, ja preenchendo com o contexto:
+SUGIRA o modelo de comando:
+"Preciso que faca o recurso X da parte Y contra a decisao Z, no sentido de X, pelos seguintes fundamentos: XXX."
 
-"Preciso que faca o recurso X da parte Y contra a decisao Z, no sentido
-de X, pelos seguintes fundamentos: XXX."
+SUGIRA upload de documentos uteis para reaproveitar argumentos.
 
-SUGIRA tambem que o usuario faca upload de documento se houver alguma
-peticao anterior ou decisao que possa aproveitar argumentos para o recurso.
+ATENCAO ESPECIAL: se o recurso for contra SENTENCA PENAL CONDENATORIA com erro na DOSIMETRIA da pena, procure potenciais erros em cada fase da dosimetria e no rol das penas. Individualize a dosimetria para cada reu, se houver mais de um.
 
-ATENCAO ESPECIAL: se o recurso for contra SENTENCA PENAL CONDENATORIA
-apontando erro na DOSIMETRIA da pena, procure potenciais erros em cada
-fase da dosimetria e no rol das penas. Individualize a dosimetria para
-cada reu, se houver mais de um.
+PROXIMA ACAO: chame recurso com etapa='4_elaboracao'.`,
 
-Apos o usuario fornecer o comando, chame recurso_passo4.`),
-		);
-
-		this.server.registerTool(
-			"recurso_passo4",
-			{
-				description: "Passo 4 do procedimento de recurso. Elaboracao.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Recurso - Passo 4 de 7.
+					"4_elaboracao": `PROCEDIMENTO: RECURSO - Etapa 4 de 7 (elaboracao).
 
 ELABORE o recurso proposto.
 
-Insira topicos envolvendo os REQUISITOS EXTRINSECOS do recurso:
+Insira topicos com REQUISITOS EXTRINSECOS:
 - Tempestividade
 - Cabimento
 - Legitimidade
@@ -578,539 +496,380 @@ Insira topicos envolvendo os REQUISITOS EXTRINSECOS do recurso:
 
 Escreva em partes para deixar o texto longo e profundo.
 
-Apos concluir, chame recurso_passo5.`),
-		);
+PROXIMA ACAO: chame recurso com etapa='5_aprofundamento'.`,
 
-		this.server.registerTool(
-			"recurso_passo5",
-			{
-				description: "Passo 5 do procedimento de recurso. Aprofundamento.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Recurso - Passo 5 de 7.
+					"5_aprofundamento": `PROCEDIMENTO: RECURSO - Etapa 5 de 7 (aprofundamento).
 
 ${PROTOCOLO_DESENVOLVIMENTO_APROFUNDADO}
 
 Tambem TRANSCREVA os artigos mencionados citando a fonte do site do Planalto.
 
-Apos concluir, chame recurso_passo6.`),
-		);
+PROXIMA ACAO: chame recurso com etapa='6_jurisprudencia'.`,
 
-		this.server.registerTool(
-			"recurso_passo6",
-			{
-				description: "Passo 6 do procedimento de recurso. Jurisprudencia.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Recurso - Passo 6 de 7.
+					"6_jurisprudencia": `PROCEDIMENTO: RECURSO - Etapa 6 de 7 (jurisprudencia).
 
-PERGUNTE ao usuario se deseja continuar para a pesquisa de JURISPRUDENCIA.
+PERGUNTE se deseja continuar para a pesquisa de JURISPRUDENCIA.
 
 ${PROTOCOLO_J7}
 
-Apos a pesquisa, chame recurso_passo7.`),
-		);
+PROXIMA ACAO: chame recurso com etapa='7_finalizar'.`,
 
-		this.server.registerTool(
-			"recurso_passo7",
-			{
-				description: "Passo 7 (final) do procedimento de recurso.",
-				inputSchema: {},
+					"7_finalizar": `PROCEDIMENTO: RECURSO - Etapa 7 de 7 (FINAL).
+
+${PROTOCOLO_APROFUNDAMENTO_FINAL}`,
+				};
+				return text(conteudos[etapa]);
 			},
-			async () => text(`PROCEDIMENTO: Recurso - Passo 7 de 7 (FINAL).
-
-${PROTOCOLO_APROFUNDAMENTO_FINAL}`),
 		);
 
 		// ============================================================
-		// CONTRARRAZOES (7 passos)
+		// CONTRARRAZOES
 		// ============================================================
-
 		this.server.registerTool(
-			"contrarrazoes_iniciar",
+			"contrarrazoes",
 			{
-				description: "Inicia o procedimento de elaboracao de contrarrazoes ao recurso. Use quando o usuario quiser responder a um recurso da parte adversa. Procedimento em 7 passos.",
-				inputSchema: {},
+				description: "Procedimento de elaboracao de contrarrazoes ao recurso da parte adversa. Use quando o usuario quiser responder a recurso. 7 etapas. Comece com etapa='1_inicio'.",
+				inputSchema: {
+					etapa: z.enum([
+						"1_inicio",
+						"2_analise",
+						"3_definicao",
+						"4_elaboracao",
+						"5_aprofundamento",
+						"6_jurisprudencia",
+						"7_finalizar"
+					]).describe("Etapa do procedimento."),
+				},
 			},
-			async () => text(`${PROTOCOLO_PERSONA_JURIDICA}
+			async ({ etapa }) => {
+				const conteudos: Record<string, string> = {
+					"1_inicio": `${PROTOCOLO_PERSONA_JURIDICA}
 
-PROCEDIMENTO: Contrarrazoes ao Recurso - Passo 1 de 7.
+PROCEDIMENTO: CONTRARRAZOES - Etapa 1 de 7 (inicio).
+Avise que sao 7 etapas. Use a lousa SOMENTE quando solicitado.
 
-Avise que sao 7 passos. Use a lousa SOMENTE quando solicitado.
-
-Antes de executar, PECA upload das principais pecas processuais
-separadamente OU insercao do relatorio do processo (PREFIRA essa opcao).
+PECA upload das principais pecas processuais separadamente OU insercao do relatorio do processo (PREFIRA essa opcao).
 
 ${PROTOCOLO_ROBO_RELATORIO}
 
-Apos o upload, chame contrarrazoes_passo2.`),
-		);
+PROXIMA ACAO: apos o upload, chame contrarrazoes com etapa='2_analise'.`,
 
-		this.server.registerTool(
-			"contrarrazoes_passo2",
-			{
-				description: "Passo 2 do procedimento de contrarrazoes.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Contrarrazoes - Passo 2 de 7.
+					"2_analise": `PROCEDIMENTO: CONTRARRAZOES - Etapa 2 de 7 (analise).
 
-PERGUNTE qual o nome da parte que esta sendo defendida.
+PERGUNTE o nome da parte que esta sendo defendida.
 
-Em seguida, FACA uma analise juridica detalhada com objetivo de
-preparar as contrarrazoes ao recurso.
+FACA analise juridica detalhada do caso para preparar as contrarrazoes.
 
 ${PROTOCOLO_ANALISE_CLASSICA}
 
-AVISE para que o usuario clique no nome superior do robo e altere para
-o "modelo" de raciocinio mais profundo (extended thinking).
+AVISE para que o usuario altere para o "modelo" de raciocinio mais profundo (extended thinking).
 
-Apos apresentar a analise, chame contrarrazoes_passo3.`),
-		);
+PROXIMA ACAO: chame contrarrazoes com etapa='3_definicao'.`,
 
-		this.server.registerTool(
-			"contrarrazoes_passo3",
-			{
-				description: "Passo 3 do procedimento de contrarrazoes.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Contrarrazoes - Passo 3 de 7.
+					"3_definicao": `PROCEDIMENTO: CONTRARRAZOES - Etapa 3 de 7 (definicao).
 
 PERGUNTE:
-- Contra qual recurso o usuario deseja apresentar contrarrazoes?
+- Contra qual recurso?
 - Em favor de qual parte?
 - Sob quais fundamentos?
 
 SUGIRA o modelo de comando:
+"Preciso que faca contrarrazoes em favor da parte XX contra o recurso X da parte Y, no sentido de manter a decisao pelos seus proprios fundamentos (ou pelos seguintes fundamentos: XXX)."
 
-"Preciso que faca contrarrazoes em favor da parte XX contra o recurso X
-da parte Y, no sentido de manter a decisao pelos seus proprios fundamentos
-(ou pelos seguintes fundamentos: XXX)."
+SUGIRA upload de documentos uteis.
 
-SUGIRA upload de documentos uteis para reaproveitar argumentos.
+PROXIMA ACAO: chame contrarrazoes com etapa='4_elaboracao'.`,
 
-Apos o comando do usuario, chame contrarrazoes_passo4.`),
-		);
-
-		this.server.registerTool(
-			"contrarrazoes_passo4",
-			{
-				description: "Passo 4 do procedimento de contrarrazoes. Elaboracao.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Contrarrazoes - Passo 4 de 7.
+					"4_elaboracao": `PROCEDIMENTO: CONTRARRAZOES - Etapa 4 de 7 (elaboracao).
 
 ELABORE as contrarrazoes contra o recurso proposto.
 
-INSIRA um topico generico de TEMPESTIVIDADE e demais requisitos
-extrinsecos quando aplicavel.
+INSIRA um topico generico de TEMPESTIVIDADE e demais requisitos extrinsecos quando aplicavel.
 
 Escreva em partes para deixar o texto longo e profundo.
 
-Apos concluir, chame contrarrazoes_passo5.`),
-		);
+PROXIMA ACAO: chame contrarrazoes com etapa='5_aprofundamento'.`,
 
-		this.server.registerTool(
-			"contrarrazoes_passo5",
-			{
-				description: "Passo 5 do procedimento de contrarrazoes. Aprofundamento.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Contrarrazoes - Passo 5 de 7.
+					"5_aprofundamento": `PROCEDIMENTO: CONTRARRAZOES - Etapa 5 de 7 (aprofundamento).
 
 ${PROTOCOLO_DESENVOLVIMENTO_APROFUNDADO}
 
 Tambem TRANSCREVA os artigos mencionados citando a fonte do site do Planalto.
 
-Apos concluir, chame contrarrazoes_passo6.`),
-		);
+PROXIMA ACAO: chame contrarrazoes com etapa='6_jurisprudencia'.`,
 
-		this.server.registerTool(
-			"contrarrazoes_passo6",
-			{
-				description: "Passo 6 do procedimento de contrarrazoes. Jurisprudencia.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Contrarrazoes - Passo 6 de 7.
+					"6_jurisprudencia": `PROCEDIMENTO: CONTRARRAZOES - Etapa 6 de 7 (jurisprudencia).
 
 PERGUNTE se deseja continuar para a pesquisa de JURISPRUDENCIA.
 
 ${PROTOCOLO_J7}
 
-Apos a pesquisa, chame contrarrazoes_passo7.`),
-		);
+PROXIMA ACAO: chame contrarrazoes com etapa='7_finalizar'.`,
 
-		this.server.registerTool(
-			"contrarrazoes_passo7",
-			{
-				description: "Passo 7 (final) do procedimento de contrarrazoes.",
-				inputSchema: {},
+					"7_finalizar": `PROCEDIMENTO: CONTRARRAZOES - Etapa 7 de 7 (FINAL).
+
+${PROTOCOLO_APROFUNDAMENTO_FINAL}`,
+				};
+				return text(conteudos[etapa]);
 			},
-			async () => text(`PROCEDIMENTO: Contrarrazoes - Passo 7 de 7 (FINAL).
-
-${PROTOCOLO_APROFUNDAMENTO_FINAL}`),
 		);
 
 		// ============================================================
-		// ALEGACOES FINAIS (7 passos)
+		// ALEGACOES FINAIS
 		// ============================================================
-
 		this.server.registerTool(
-			"alegacoes_finais_iniciar",
+			"alegacoes_finais",
 			{
-				description: "Inicia o procedimento de elaboracao de alegacoes finais. Use quando o usuario pedir ajuda para fazer alegacoes finais apos a instrucao processual. Procedimento em 7 passos.",
-				inputSchema: {},
+				description: "Procedimento de elaboracao de alegacoes finais apos instrucao processual. Use quando o usuario quiser fazer alegacoes finais. 7 etapas. Comece com etapa='1_inicio'.",
+				inputSchema: {
+					etapa: z.enum([
+						"1_inicio",
+						"2_identificacao",
+						"3_analise",
+						"4_elaboracao",
+						"5_aprofundamento",
+						"6_jurisprudencia",
+						"7_finalizar"
+					]).describe("Etapa do procedimento."),
+				},
 			},
-			async () => text(`${PROTOCOLO_PERSONA_JURIDICA}
+			async ({ etapa }) => {
+				const conteudos: Record<string, string> = {
+					"1_inicio": `${PROTOCOLO_PERSONA_JURIDICA}
 
-PROCEDIMENTO: Alegacoes Finais - Passo 1 de 7.
+PROCEDIMENTO: ALEGACOES FINAIS - Etapa 1 de 7 (inicio).
+Avise que sao 7 etapas. NAO ative a lousa.
 
-Avise que sao 7 passos. NAO ative a lousa, exceto se solicitado.
-
-Antes de executar, PECA upload das principais pecas processuais
-separadamente OU insercao do relatorio do processo.
+PECA upload das principais pecas processuais separadamente OU insercao do relatorio do processo.
 
 ${PROTOCOLO_ROBO_RELATORIO}
 
-Apos o upload, chame alegacoes_finais_passo2.`),
-		);
+PROXIMA ACAO: apos o upload, chame alegacoes_finais com etapa='2_identificacao'.`,
 
-		this.server.registerTool(
-			"alegacoes_finais_passo2",
-			{
-				description: "Passo 2 das alegacoes finais.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Alegacoes Finais - Passo 2 de 7.
+					"2_identificacao": `PROCEDIMENTO: ALEGACOES FINAIS - Etapa 2 de 7 (identificacao).
 
-PERGUNTE qual o nome da parte que esta sendo defendida e se ha
-algum fato relevante para destacar (ex: depoimento em audiencia
-no sentido X).
+PERGUNTE o nome da parte sendo defendida e se ha algum fato relevante para destacar (ex: depoimento em audiencia no sentido X).
 
-Apos a resposta, chame alegacoes_finais_passo3.`),
-		);
+PROXIMA ACAO: chame alegacoes_finais com etapa='3_analise'.`,
 
-		this.server.registerTool(
-			"alegacoes_finais_passo3",
-			{
-				description: "Passo 3 das alegacoes finais. Analise juridica.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Alegacoes Finais - Passo 3 de 7.
+					"3_analise": `PROCEDIMENTO: ALEGACOES FINAIS - Etapa 3 de 7 (analise).
 
-FACA uma analise juridica detalhada do caso com objetivo de preparar
-as alegacoes finais nos proximos passos.
+FACA analise juridica detalhada do caso para preparar as alegacoes finais.
 
 ${PROTOCOLO_ANALISE_CLASSICA}
 
-Apos apresentar, chame alegacoes_finais_passo4.`),
-		);
+PROXIMA ACAO: chame alegacoes_finais com etapa='4_elaboracao'.`,
 
-		this.server.registerTool(
-			"alegacoes_finais_passo4",
-			{
-				description: "Passo 4 das alegacoes finais. Elaboracao.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Alegacoes Finais - Passo 4 de 7.
+					"4_elaboracao": `PROCEDIMENTO: ALEGACOES FINAIS - Etapa 4 de 7 (elaboracao).
 
-SUGIRA o seguinte modelo de comando, ja preenchendo com o contexto:
+SUGIRA o modelo de comando:
+"Preciso que voce faca as ALEGACOES FINAIS em favor da parte XXXX, requerendo XXXX, ressaltando os seguintes fundamentos XXXXX. Preciso que as alegacoes finais contestem todos os possiveis fatos e argumentos juridicos da parte contraria, especialmente os pontos XXXXXX, isso porque XXXXXX. Utilize tambem argumentos do arquivo em anexo. Faca em partes."
 
-"Preciso que voce faca as ALEGACOES FINAIS em favor da parte XXXX,
-requerendo XXXX, ressaltando os seguintes fundamentos XXXXX. Preciso
-que as alegacoes finais contestem todos os possiveis fatos e argumentos
-juridicos da parte contraria, especialmente os pontos XXXXXX, isso
-porque XXXXXX. Utilize tambem argumentos do arquivo em anexo. Faca em partes."
+ELABORE as alegacoes finais em partes.
 
-Apos o comando, ELABORE as alegacoes finais em partes.
+PROXIMA ACAO: chame alegacoes_finais com etapa='5_aprofundamento'.`,
 
-Apos concluir, chame alegacoes_finais_passo5.`),
-		);
-
-		this.server.registerTool(
-			"alegacoes_finais_passo5",
-			{
-				description: "Passo 5 das alegacoes finais. Aprofundamento.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Alegacoes Finais - Passo 5 de 7.
+					"5_aprofundamento": `PROCEDIMENTO: ALEGACOES FINAIS - Etapa 5 de 7 (aprofundamento).
 
 ${PROTOCOLO_DESENVOLVIMENTO_APROFUNDADO}
 
 Tambem TRANSCREVA os artigos mencionados citando a fonte do site do Planalto.
 
-Apos concluir, chame alegacoes_finais_passo6.`),
-		);
+PROXIMA ACAO: chame alegacoes_finais com etapa='6_jurisprudencia'.`,
 
-		this.server.registerTool(
-			"alegacoes_finais_passo6",
-			{
-				description: "Passo 6 das alegacoes finais. Jurisprudencia.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Alegacoes Finais - Passo 6 de 7.
+					"6_jurisprudencia": `PROCEDIMENTO: ALEGACOES FINAIS - Etapa 6 de 7 (jurisprudencia).
 
 PERGUNTE se deseja continuar para a pesquisa de JURISPRUDENCIA.
 
 ${PROTOCOLO_J7}
 
-Apos a pesquisa, chame alegacoes_finais_passo7.`),
-		);
+PROXIMA ACAO: chame alegacoes_finais com etapa='7_finalizar'.`,
 
-		this.server.registerTool(
-			"alegacoes_finais_passo7",
-			{
-				description: "Passo 7 (final) das alegacoes finais.",
-				inputSchema: {},
+					"7_finalizar": `PROCEDIMENTO: ALEGACOES FINAIS - Etapa 7 de 7 (FINAL).
+
+${PROTOCOLO_APROFUNDAMENTO_FINAL}`,
+				};
+				return text(conteudos[etapa]);
 			},
-			async () => text(`PROCEDIMENTO: Alegacoes Finais - Passo 7 de 7 (FINAL).
-
-${PROTOCOLO_APROFUNDAMENTO_FINAL}`),
 		);
 
 		// ============================================================
-		// AUDIENCIA (9 passos)
+		// AUDIENCIA
 		// ============================================================
-
 		this.server.registerTool(
-			"audiencia_iniciar",
+			"audiencia",
 			{
-				description: "Inicia o procedimento de preparacao para audiencia. Use quando o usuario precisar se preparar para audiencia (de instrucao, de conciliacao, una, etc.) com elaboracao de perguntas para testemunhas. Procedimento em 9 passos.",
-				inputSchema: {},
+				description: "Procedimento de preparacao para audiencia (instrucao, conciliacao, una) com perguntas para testemunhas. Use quando o usuario quiser se preparar para audiencia. 9 etapas. Comece com etapa='1_inicio'.",
+				inputSchema: {
+					etapa: z.enum([
+						"1_inicio",
+						"2_identificacao",
+						"3_analise",
+						"4_preparacao",
+						"5_pos_audiencia",
+						"6_alegacoes",
+						"7_aprofundamento",
+						"8_jurisprudencia",
+						"9_finalizar"
+					]).describe("Etapa do procedimento."),
+				},
 			},
-			async () => text(`${PROTOCOLO_PERSONA_JURIDICA}
+			async ({ etapa }) => {
+				const conteudos: Record<string, string> = {
+					"1_inicio": `${PROTOCOLO_PERSONA_JURIDICA}
 
-PROCEDIMENTO: Audiencia - Passo 1 de 9.
+PROCEDIMENTO: AUDIENCIA - Etapa 1 de 9 (inicio).
+Avise que sao 9 etapas. NAO ative a lousa.
 
-Avise que sao 9 passos. NAO ative a lousa, exceto se solicitado.
-
-Antes de executar, PECA upload das principais pecas processuais
-separadamente OU insercao do relatorio do processo.
+PECA upload das principais pecas processuais separadamente OU insercao do relatorio do processo.
 
 ${PROTOCOLO_ROBO_RELATORIO}
 
-Apos o upload, chame audiencia_passo2.`),
-		);
+PROXIMA ACAO: apos o upload, chame audiencia com etapa='2_identificacao'.`,
 
-		this.server.registerTool(
-			"audiencia_passo2",
-			{
-				description: "Passo 2 da preparacao para audiencia.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Audiencia - Passo 2 de 9.
+					"2_identificacao": `PROCEDIMENTO: AUDIENCIA - Etapa 2 de 9 (identificacao).
 
-PERGUNTE qual o nome da parte que esta sendo defendida e se ha
-algum fato relevante para destacar.
+PERGUNTE o nome da parte sendo defendida e se ha algum fato relevante para destacar.
 
-Apos a resposta, chame audiencia_passo3.`),
-		);
+PROXIMA ACAO: chame audiencia com etapa='3_analise'.`,
 
-		this.server.registerTool(
-			"audiencia_passo3",
-			{
-				description: "Passo 3 da preparacao para audiencia. Analise juridica.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Audiencia - Passo 3 de 9.
+					"3_analise": `PROCEDIMENTO: AUDIENCIA - Etapa 3 de 9 (analise).
 
-FACA uma analise juridica detalhada do caso, com objetivo de preparar
-para AUDIENCIA nos proximos passos.
+FACA analise juridica detalhada do caso, com objetivo de preparar para AUDIENCIA.
 
 ${PROTOCOLO_ANALISE_CLASSICA}
 
-Como sua funcao tambem e assessorar na preparacao para audiencias,
-faca perguntas que possam ser importantes para comprovar a tese
-defensiva e encontrar contradicoes nas acusacoes.
+Faca perguntas que possam comprovar a tese defensiva e encontrar contradicoes nas acusacoes.
 
-Apos apresentar, chame audiencia_passo4.`),
-		);
+PROXIMA ACAO: chame audiencia com etapa='4_preparacao'.`,
 
-		this.server.registerTool(
-			"audiencia_passo4",
-			{
-				description: "Passo 4 da preparacao para audiencia.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Audiencia - Passo 4 de 9.
+					"4_preparacao": `PROCEDIMENTO: AUDIENCIA - Etapa 4 de 9 (preparacao).
 
-SUGIRA o seguinte modelo de comando ao usuario:
-
-"Vou participar de uma audiencia de XXXX e preciso defender/acusar
-XXXXXXXXX. Preciso que voce me prepare para a AUDIENCIA, pode me ajudar?
-Ao final, pode detalhar as perguntas que devo fazer a cada testemunha?"
+SUGIRA o modelo de comando:
+"Vou participar de uma audiencia de XXXX e preciso defender/acusar XXXXXXXXX. Preciso que voce me prepare para a AUDIENCIA, pode me ajudar? Ao final, pode detalhar as perguntas que devo fazer a cada testemunha?"
 
 ELABORE a preparacao com perguntas detalhadas para cada testemunha.
 
-Apos concluir, chame audiencia_passo5.`),
-		);
+PROXIMA ACAO: chame audiencia com etapa='5_pos_audiencia'.`,
 
-		this.server.registerTool(
-			"audiencia_passo5",
-			{
-				description: "Passo 5 da audiencia. Pos-audiencia.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Audiencia - Passo 5 de 9.
+					"5_pos_audiencia": `PROCEDIMENTO: AUDIENCIA - Etapa 5 de 9 (pos-audiencia).
 
-APOS a audiencia ter ocorrido, SOLICITE ao usuario:
+APOS a audiencia ter ocorrido, SOLICITE:
 - Resumo do depoimento de cada testemunha.
-- Se for o caso, alegacoes finais da parte contraria (pode anexar documentos).
+- Se for o caso, alegacoes finais da parte contraria.
 
-Apos receber o material, chame audiencia_passo6.`),
-		);
+PROXIMA ACAO: chame audiencia com etapa='6_alegacoes'.`,
 
-		this.server.registerTool(
-			"audiencia_passo6",
-			{
-				description: "Passo 6 da audiencia. Modelo de comando para alegacoes finais.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Audiencia - Passo 6 de 9.
+					"6_alegacoes": `PROCEDIMENTO: AUDIENCIA - Etapa 6 de 9 (alegacoes finais).
 
-SUGIRA o seguinte modelo de comando para as alegacoes finais:
+SUGIRA o modelo de comando:
+"Preciso que voce faca as ALEGACOES FINAIS em favor da parte XXXX, requerendo XXXX, ressaltando os seguintes fundamentos XXXXX. Preciso que as alegacoes finais contestem todos os possiveis fatos e argumentos juridicos da parte contraria, especialmente os pontos XXXXXX, isso porque XXXXXX. Utilize tambem argumentos do arquivo em anexo. Faca em partes."
 
-"Preciso que voce faca as ALEGACOES FINAIS em favor da parte XXXX,
-requerendo XXXX, ressaltando os seguintes fundamentos XXXXX. Preciso
-que as alegacoes finais contestem todos os possiveis fatos e argumentos
-juridicos da parte contraria, especialmente os pontos XXXXXX, isso
-porque XXXXXX. Utilize tambem argumentos do arquivo em anexo. Faca em partes."
+ELABORE as alegacoes finais em partes.
 
-Apos o comando, ELABORE as alegacoes finais em partes.
+PROXIMA ACAO: chame audiencia com etapa='7_aprofundamento'.`,
 
-Apos concluir, chame audiencia_passo7.`),
-		);
-
-		this.server.registerTool(
-			"audiencia_passo7",
-			{
-				description: "Passo 7 da audiencia. Aprofundamento.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Audiencia - Passo 7 de 9.
+					"7_aprofundamento": `PROCEDIMENTO: AUDIENCIA - Etapa 7 de 9 (aprofundamento).
 
 ${PROTOCOLO_DESENVOLVIMENTO_APROFUNDADO}
 
 Tambem TRANSCREVA os artigos mencionados citando a fonte do site do Planalto.
 
-Apos concluir, chame audiencia_passo8.`),
-		);
+PROXIMA ACAO: chame audiencia com etapa='8_jurisprudencia'.`,
 
-		this.server.registerTool(
-			"audiencia_passo8",
-			{
-				description: "Passo 8 da audiencia. Jurisprudencia.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Audiencia - Passo 8 de 9.
+					"8_jurisprudencia": `PROCEDIMENTO: AUDIENCIA - Etapa 8 de 9 (jurisprudencia).
 
 PERGUNTE se deseja continuar para a pesquisa de JURISPRUDENCIA.
 
 ${PROTOCOLO_J7}
 
-Apos a pesquisa, chame audiencia_passo9.`),
-		);
+PROXIMA ACAO: chame audiencia com etapa='9_finalizar'.`,
 
-		this.server.registerTool(
-			"audiencia_passo9",
-			{
-				description: "Passo 9 (final) da audiencia.",
-				inputSchema: {},
+					"9_finalizar": `PROCEDIMENTO: AUDIENCIA - Etapa 9 de 9 (FINAL).
+
+${PROTOCOLO_APROFUNDAMENTO_FINAL}`,
+				};
+				return text(conteudos[etapa]);
 			},
-			async () => text(`PROCEDIMENTO: Audiencia - Passo 9 de 9 (FINAL).
-
-${PROTOCOLO_APROFUNDAMENTO_FINAL}`),
 		);
 
 		// ============================================================
-		// JURI (3 passos)
+		// JURI
 		// ============================================================
-
 		this.server.registerTool(
-			"juri_iniciar",
+			"juri",
 			{
-				description: "Inicia o procedimento de preparacao para sessao do juri. Use quando o usuario precisar preparar defesa ou acusacao em julgamento pelo Tribunal do Juri. Procedimento em 3 passos com elementos de storytelling.",
-				inputSchema: {},
+				description: "Procedimento de preparacao para sessao do Tribunal do Juri com elementos de storytelling. Use quando o usuario quiser preparar defesa ou acusacao no juri. 3 etapas. Comece com etapa='1_inicio'.",
+				inputSchema: {
+					etapa: z.enum([
+						"1_inicio",
+						"2_introducao_storytelling",
+						"3_conclusao_storytelling"
+					]).describe("Etapa do procedimento."),
+				},
 			},
-			async () => text(`${PROTOCOLO_PERSONA_JURIDICA}
+			async ({ etapa }) => {
+				const conteudos: Record<string, string> = {
+					"1_inicio": `${PROTOCOLO_PERSONA_JURIDICA}
 
-PROCEDIMENTO: Juri - Passo 1 de 3.
+PROCEDIMENTO: JURI - Etapa 1 de 3 (inicio).
 
-PERGUNTE qual a parte sendo defendida e SOLICITE upload do documento
-ou resumo do caso.
+PERGUNTE qual a parte sendo defendida e SOLICITE upload do documento ou resumo do caso.
 
-ALERTE para verificar se o PDF esta em imagem (geralmente os inqueritos
-estao). Se estiver, ORIENTE a converter em PDF selecionavel (OCR) no site
-https://www.ilovepdf.com/pt/ocr-pdf
+ALERTE para verificar se o PDF esta em imagem (geralmente os inqueritos estao). Se estiver, ORIENTE a converter em PDF selecionavel (OCR) no site https://www.ilovepdf.com/pt/ocr-pdf
 
-FACA uma analise juridica previa e detalhada do caso.
+FACA analise juridica previa e detalhada do caso.
 
 SUGIRA o modelo de comando:
+"No caso em concreto defendo X e quero provar Y. O que posso defender na sessao do juri?"
 
-"No caso em concreto defendo X e quero provar Y. O que posso defender
-na sessao do juri?"
+Utilize ferramentas de STORYTELLING para auxiliar.
 
-Como sua funcao tambem e assessorar na preparacao para defesa na sessao
-do juri, utilize ferramentas de STORYTELLING para auxiliar.
+PROXIMA ACAO: chame juri com etapa='2_introducao_storytelling'.`,
 
-Apos apresentar a analise, chame juri_passo2.`),
-		);
+					"2_introducao_storytelling": `PROCEDIMENTO: JURI - Etapa 2 de 3 (introducao com storytelling).
 
-		this.server.registerTool(
-			"juri_passo2",
-			{
-				description: "Passo 2 do juri. Introducao com storytelling.",
-				inputSchema: {},
+SUGIRA o modelo de comando:
+"Agora, preciso que utilize elementos de storytelling para fazer uma introducao a sustentacao oral que sensibilize os jurados XXXXXX (acrescente uma peculiaridade dos jurados, da situacao e/ou do reu)."
+
+ELABORE a introducao com storytelling, sensibilizando os jurados conforme as peculiaridades fornecidas.
+
+PROXIMA ACAO: chame juri com etapa='3_conclusao_storytelling'.`,
+
+					"3_conclusao_storytelling": `PROCEDIMENTO: JURI - Etapa 3 de 3 (FINAL - conclusao com storytelling).
+
+SUGIRA o modelo de comando:
+"Agora, preciso que utilize elementos de storytelling para fazer uma conclusao a sustentacao oral que sensibilize os jurados XXXXXX (acrescente uma peculiaridade dos jurados, da situacao e/ou do reu)."
+
+ELABORE a conclusao com elementos de storytelling, em narrativa envolvente que reforce a tese defensiva.
+
+PERGUNTE ao usuario se deseja aprofundar algum ponto. Procedimento concluido.`,
+				};
+				return text(conteudos[etapa]);
 			},
-			async () => text(`PROCEDIMENTO: Juri - Passo 2 de 3.
-
-SUGIRA o seguinte modelo de comando ao usuario:
-
-"Agora, preciso que utilize elementos de storytelling para fazer uma
-introducao a sustentacao oral que sensibilize os jurados XXXXXX
-(acrescente uma peculiaridade dos jurados, da situacao e/ou do reu)."
-
-ELABORE a introducao com storytelling, sensibilizando os jurados conforme
-as peculiaridades fornecidas.
-
-Apos concluir, chame juri_passo3.`),
-		);
-
-		this.server.registerTool(
-			"juri_passo3",
-			{
-				description: "Passo 3 (final) do juri. Conclusao com storytelling.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Juri - Passo 3 de 3 (FINAL).
-
-SUGIRA o seguinte modelo de comando ao usuario:
-
-"Agora, preciso que utilize elementos de storytelling para fazer uma
-conclusao a sustentacao oral que sensibilize os jurados XXXXXX
-(acrescente uma peculiaridade dos jurados, da situacao e/ou do reu)."
-
-ELABORE a conclusao com elementos de storytelling, em narrativa
-envolvente que reforce a tese defensiva.
-
-PERGUNTE ao usuario se deseja aprofundar algum ponto ou refinar a
-sustentacao oral. Procedimento concluido.`),
 		);
 
 		// ============================================================
-		// SUSTENTACAO ORAL E MEMORIAIS (2 passos)
+		// SUSTENTACAO ORAL E MEMORIAIS
 		// ============================================================
-
 		this.server.registerTool(
-			"sustentacao_oral_iniciar",
+			"sustentacao_oral",
 			{
-				description: "Inicia o procedimento de elaboracao de sustentacao oral e/ou memoriais. Use quando o usuario precisar preparar sustentacao oral em sessao de julgamento de tribunal ou memoriais para entrega aos julgadores. Procedimento em 2 passos.",
-				inputSchema: {},
+				description: "Procedimento de elaboracao de sustentacao oral em sessao de tribunal e/ou memoriais para entrega aos julgadores. Use quando o usuario quiser preparar sustentacao oral ou memoriais. 2 etapas. Comece com etapa='1_sustentacao'.",
+				inputSchema: {
+					etapa: z.enum([
+						"1_sustentacao",
+						"2_memoriais"
+					]).describe("Etapa do procedimento."),
+				},
 			},
-			async () => text(`${PROTOCOLO_PERSONA_JURIDICA}
+			async ({ etapa }) => {
+				const conteudos: Record<string, string> = {
+					"1_sustentacao": `${PROTOCOLO_PERSONA_JURIDICA}
 
-PROCEDIMENTO: Sustentacao Oral e Memoriais - Passo 1 de 2.
+PROCEDIMENTO: SUSTENTACAO ORAL - Etapa 1 de 2.
 
-Antes de executar, PECA upload do documento ou insercao do texto.
+PECA upload do documento ou insercao do texto.
 
 PERGUNTE:
 - Qual o tom que deve ser usado na sustentacao oral?
@@ -1118,70 +877,65 @@ PERGUNTE:
 
 ELABORE uma sustentacao oral CONVINCENTE conforme as orientacoes.
 
-Apos concluir, chame sustentacao_oral_passo2.`),
-		);
+PROXIMA ACAO: chame sustentacao_oral com etapa='2_memoriais'.`,
 
-		this.server.registerTool(
-			"sustentacao_oral_passo2",
-			{
-				description: "Passo 2 (final) de sustentacao oral. Memoriais.",
-				inputSchema: {},
+					"2_memoriais": `PROCEDIMENTO: SUSTENTACAO ORAL - Etapa 2 de 2 (FINAL - memoriais).
+
+PERGUNTE se o usuario deseja a producao de MEMORIAIS para entrega no gabinete.
+
+Se sim, ELABORE memoriais convincentes e MAIS TECNICOS que a sustentacao oral. Memoriais permitem maior detalhamento juridico e citacao precisa de dispositivos legais.
+
+Procedimento concluido.`,
+				};
+				return text(conteudos[etapa]);
 			},
-			async () => text(`PROCEDIMENTO: Sustentacao Oral e Memoriais - Passo 2 de 2 (FINAL).
-
-PERGUNTE se o usuario deseja a producao de MEMORIAIS para entrega no
-gabinete (despacho com o relator/julgador).
-
-Se sim, ELABORE memoriais convincentes e MAIS TECNICOS que a sustentacao
-oral. Memoriais permitem maior detalhamento juridico e citacao precisa
-de dispositivos legais.
-
-Procedimento concluido.`),
 		);
 
 		// ============================================================
-		// JURISPRUDENCIA (autonoma)
+		// JURISPRUDENCIA
 		// ============================================================
-
 		this.server.registerTool(
-			"jurisprudencia_pesquisar",
+			"jurisprudencia",
 			{
-				description: "Realiza pesquisa estruturada de jurisprudencia e sumulas em fontes oficiais. Use quando o usuario pedir pesquisa de jurisprudencia, precedentes, sumulas, decisoes sobre tema especifico.",
+				description: "Pesquisa estruturada de jurisprudencia e sumulas em fontes oficiais (STJ, STF, Lexml, Dizer o Direito, JusBrasil). Use quando o usuario pedir pesquisa de jurisprudencia, precedentes, sumulas, decisoes sobre tema. Procedimento de etapa unica.",
 				inputSchema: {},
 			},
 			async () => text(`${PROTOCOLO_PERSONA_JURIDICA}
 
-PROCEDIMENTO: Pesquisa de Jurisprudencia.
+PROCEDIMENTO: PESQUISA DE JURISPRUDENCIA.
 
 PERGUNTE qual assunto o usuario deseja pesquisar.
 
-AVISE para que o usuario clique no nome superior do robo e altere para
-o "modelo" de raciocinio mais profundo (extended thinking).
+AVISE para que o usuario altere para o "modelo" de raciocinio mais profundo (extended thinking).
 
 Apos confirmar o tema, execute o protocolo:
 
 ${PROTOCOLO_J7}
 
-Ao final, PERGUNTE se deseja aprofundar algum dos julgados encontrados,
-pesquisar tema correlato, ou encerrar.`),
+Ao final, PERGUNTE se deseja aprofundar algum dos julgados encontrados, pesquisar tema correlato, ou encerrar.`),
 		);
 
 		// ============================================================
-		// ANALISE JURIDICA (2 passos)
+		// ANALISE JURIDICA
 		// ============================================================
-
 		this.server.registerTool(
-			"analise_juridica_iniciar",
+			"analise_juridica",
 			{
-				description: "Realiza analise juridica detalhada de caso concreto, seguindo estrutura classica. Use quando o usuario pedir analise juridica, parecer, ou estudo aprofundado de um caso. Procedimento em 2 passos.",
-				inputSchema: {},
+				description: "Analise juridica detalhada de caso concreto seguindo estrutura classica. Use quando o usuario pedir analise, parecer ou estudo aprofundado. 2 etapas. Comece com etapa='1_analise'.",
+				inputSchema: {
+					etapa: z.enum([
+						"1_analise",
+						"2_proximas_pecas"
+					]).describe("Etapa do procedimento."),
+				},
 			},
-			async () => text(`${PROTOCOLO_PERSONA_JURIDICA}
+			async ({ etapa }) => {
+				const conteudos: Record<string, string> = {
+					"1_analise": `${PROTOCOLO_PERSONA_JURIDICA}
 
-PROCEDIMENTO: Analise Juridica - Passo 1 de 2.
+PROCEDIMENTO: ANALISE JURIDICA - Etapa 1 de 2.
 
-Antes de executar, PECA o upload dos documentos (prefira pecas processuais
-separadas) OU resumo gerado no robo de relatorio OU digitacao da duvida.
+PECA upload dos documentos (prefira pecas processuais separadas) OU resumo gerado no robo de relatorio OU digitacao da duvida.
 
 ${PROTOCOLO_ROBO_RELATORIO}
 
@@ -1189,167 +943,153 @@ EXECUTE a analise juridica detalhada conforme o protocolo:
 
 ${PROTOCOLO_ANALISE_CLASSICA}
 
-Apos apresentar a analise, chame analise_juridica_passo2.`),
-		);
+PROXIMA ACAO: chame analise_juridica com etapa='2_proximas_pecas'.`,
 
-		this.server.registerTool(
-			"analise_juridica_passo2",
-			{
-				description: "Passo 2 (final) da analise juridica. Sugestao de proximas pecas.",
-				inputSchema: {},
+					"2_proximas_pecas": `PROCEDIMENTO: ANALISE JURIDICA - Etapa 2 de 2 (FINAL).
+
+PERGUNTE ao usuario se deseja auxilio para elaborar alguma peticao judicial cabivel ao caso.
+
+Se sim, EXECUTE o procedimento adequado conforme o tipo de peca:
+- Peticao inicial: chame peticao_inicial com etapa='1_inicio'
+- Contestacao: chame contestacao com etapa='1_inicio'
+- Replica: chame replica com etapa='1_inicio'
+- Recurso: chame recurso com etapa='1_inicio'
+- Contrarrazoes: chame contrarrazoes com etapa='1_inicio'
+- Alegacoes finais: chame alegacoes_finais com etapa='1_inicio'
+- Outros casos: chame outros com etapa='1_inicio'
+
+Procedimento concluido.`,
+				};
+				return text(conteudos[etapa]);
 			},
-			async () => text(`PROCEDIMENTO: Analise Juridica - Passo 2 de 2 (FINAL).
-
-PERGUNTE ao usuario se deseja auxilio para elaborar alguma peticao
-judicial cabivel ao caso concreto.
-
-Se sim, EXECUTE o procedimento mais adequado conforme o tipo de peca:
-- Para peticao inicial: chame peticao_inicial_iniciar
-- Para contestacao: chame contestacao_iniciar
-- Para replica: chame replica_iniciar
-- Para recurso: chame recurso_iniciar
-- Para contrarrazoes: chame contrarrazoes_iniciar
-- Para alegacoes finais: chame alegacoes_finais_iniciar
-- Para outros casos: chame outros_iniciar
-
-Procedimento concluido.`),
 		);
 
 		// ============================================================
-		// CORRECAO DE TEXTO (4 passos)
+		// CORRECAO DE TEXTO
 		// ============================================================
-
 		this.server.registerTool(
-			"correcao_texto_iniciar",
+			"correcao_texto",
 			{
-				description: "Realiza correcao gramatical e ortografica de texto juridico, podendo aprimorar para escrita mais juridica e construir linha do tempo se houver muitas datas. Procedimento em 4 passos.",
-				inputSchema: {},
+				description: "Correcao gramatical e ortografica de texto juridico, com aprimoramento juridico opcional e linha do tempo. Use quando o usuario pedir correcao de texto. 4 etapas. Comece com etapa='1_solicitar'.",
+				inputSchema: {
+					etapa: z.enum([
+						"1_solicitar",
+						"2_corrigir",
+						"3_aprimorar",
+						"4_linha_tempo"
+					]).describe("Etapa do procedimento."),
+				},
 			},
-			async () => text(`${PROTOCOLO_PERSONA_JURIDICA}
+			async ({ etapa }) => {
+				const conteudos: Record<string, string> = {
+					"1_solicitar": `${PROTOCOLO_PERSONA_JURIDICA}
 
-PROCEDIMENTO: Correcao Gramatical e Ortografica - Passo 1 de 4.
+PROCEDIMENTO: CORRECAO DE TEXTO - Etapa 1 de 4.
 
 SOLICITE ao usuario o texto a ser corrigido.
 
-Apos receber o texto, chame correcao_texto_passo2.`),
-		);
+PROXIMA ACAO: apos receber o texto, chame correcao_texto com etapa='2_corrigir'.`,
 
-		this.server.registerTool(
-			"correcao_texto_passo2",
-			{
-				description: "Passo 2 da correcao de texto.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Correcao de Texto - Passo 2 de 4.
+					"2_corrigir": `PROCEDIMENTO: CORRECAO DE TEXTO - Etapa 2 de 4.
 
-FACA uma correcao gramatical e ortografica do texto. Seja EXIGENTE.
+FACA correcao gramatical e ortografica do texto. Seja EXIGENTE.
 
-TRANSCREVA o novo texto completo e EXPLIQUE as alteracoes realizadas.
+TRANSCREVA o novo texto completo e EXPLIQUE as alteracoes.
 
 Se o texto for muito grande, faca por topicos.
 
-Apos concluir, chame correcao_texto_passo3.`),
-		);
+PROXIMA ACAO: chame correcao_texto com etapa='3_aprimorar'.`,
 
-		this.server.registerTool(
-			"correcao_texto_passo3",
-			{
-				description: "Passo 3 da correcao de texto. Aprimoramento juridico.",
-				inputSchema: {},
+					"3_aprimorar": `PROCEDIMENTO: CORRECAO DE TEXTO - Etapa 3 de 4.
+
+PERGUNTE se o usuario deseja que o texto seja deixado mais claro e em uma escrita mais juridica.
+
+Se sim, REALIZE o aprimoramento e EXPLIQUE as alteracoes.
+
+PROXIMA ACAO: chame correcao_texto com etapa='4_linha_tempo'.`,
+
+					"4_linha_tempo": `PROCEDIMENTO: CORRECAO DE TEXTO - Etapa 4 de 4 (FINAL).
+
+SOMENTE se houver muitas datas no texto, PERGUNTE se o usuario deseja construir uma LINHA DO TEMPO em formato de tabela.
+
+Alem do formato tradicional, SUGIRA outro formato adequado ao caso.
+
+Procedimento concluido.`,
+				};
+				return text(conteudos[etapa]);
 			},
-			async () => text(`PROCEDIMENTO: Correcao de Texto - Passo 3 de 4.
-
-PERGUNTE se o usuario deseja que o texto seja deixado mais claro e em
-uma escrita mais juridica.
-
-Se sim, REALIZE o aprimoramento e EXPLIQUE as alteracoes. Se for muito
-grande, faca por topicos.
-
-Apos concluir, chame correcao_texto_passo4.`),
-		);
-
-		this.server.registerTool(
-			"correcao_texto_passo4",
-			{
-				description: "Passo 4 (final) da correcao de texto. Linha do tempo.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Correcao de Texto - Passo 4 de 4 (FINAL).
-
-SOMENTE se houver muitas datas no texto, PERGUNTE se o usuario deseja
-construir uma LINHA DO TEMPO com os dados apresentados em formato
-de tabela.
-
-Alem do formato tradicional, SUGIRA outro formato adequado ao caso
-(ex: linha do tempo visual em texto, fluxograma narrativo, etc.).
-
-Procedimento concluido.`),
 		);
 
 		// ============================================================
-		// EXPLICAR EM LINGUAGEM SIMPLES (2 passos)
+		// EXPLICAR EM LINGUAGEM SIMPLES
 		// ============================================================
-
 		this.server.registerTool(
-			"explicar_simples_iniciar",
+			"linguagem_simples",
 			{
-				description: "Elabora mensagem em formato de WhatsApp para explicar resultado de decisao judicial ou andamento processual ao cliente, em linguagem acessivel, empatica e sensivel a vulnerabilidade do assistido. Procedimento em 2 passos.",
-				inputSchema: {},
+				description: "Mensagem em formato WhatsApp para explicar decisao judicial ou processo ao cliente, em linguagem empatica com sotaque regional. Use quando o usuario quiser explicar algo ao cliente. 2 etapas. Comece com etapa='1_upload'.",
+				inputSchema: {
+					etapa: z.enum([
+						"1_upload",
+						"2_mensagem"
+					]).describe("Etapa do procedimento."),
+				},
 			},
-			async () => text(`${PROTOCOLO_PERSONA_JURIDICA}
+			async ({ etapa }) => {
+				const conteudos: Record<string, string> = {
+					"1_upload": `${PROTOCOLO_PERSONA_JURIDICA}
 
-PROCEDIMENTO: Explicar em Linguagem Simples - Passo 1 de 2.
+PROCEDIMENTO: LINGUAGEM SIMPLES - Etapa 1 de 2.
 
-Antes de executar, PECA upload das principais pecas processuais
-separadamente.
+PECA upload das principais pecas processuais separadamente.
 
-Apos o upload, chame explicar_simples_passo2.`),
-		);
+PROXIMA ACAO: chame linguagem_simples com etapa='2_mensagem'.`,
 
-		this.server.registerTool(
-			"explicar_simples_passo2",
-			{
-				description: "Passo 2 (final) de explicar simples. Geracao da mensagem.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Explicar em Linguagem Simples - Passo 2 de 2 (FINAL).
+					"2_mensagem": `PROCEDIMENTO: LINGUAGEM SIMPLES - Etapa 2 de 2 (FINAL).
 
 PERGUNTE:
 - Qual o nome da parte sendo defendida?
 - Ainda cabe recurso da parte contraria ou voce vai recorrer?
 
-ELABORE a mensagem em formato de WhatsApp seguindo:
+ELABORE mensagem em formato de WhatsApp:
 
-OBJETIVO: explicar o resultado da decisao judicial ou o andamento do
-processo, e o que pode acontecer daqui para frente.
+OBJETIVO: explicar resultado da decisao judicial ou andamento do processo, e o que pode acontecer daqui para frente.
 
 LINGUAGEM: acessivel, empatica e sensivel a vulnerabilidade do assistido.
 
-TOM: inclua expressoes regionais e um leve sotaque tipico do Estado de
-Pernambuco (ou da localidade do assistido), de forma natural e respeitosa,
-como se estivesse falando com alguem da propria comunidade. Sem exageros.
+TOM: inclua expressoes regionais e um leve sotaque tipico do Estado de Pernambuco (ou da localidade do assistido), de forma natural e respeitosa, como se estivesse falando com alguem da propria comunidade. Sem exageros.
 
 REGRAS OBRIGATORIAS:
 - SEM emojis
-- SEM travessao (em dash)
+- SEM travessao
 - Linguagem direta e humana
 
-Procedimento concluido.`),
+Procedimento concluido.`,
+				};
+				return text(conteudos[etapa]);
+			},
 		);
 
 		// ============================================================
-		// OUTROS (curinga - 4 passos)
+		// OUTROS (curinga)
 		// ============================================================
-
 		this.server.registerTool(
-			"outros_iniciar",
+			"outros",
 			{
-				description: "Procedimento curinga para auxilio em demandas juridicas que nao se encaixam nas outras ferramentas (ex: pareceres, contratos, manifestacoes diversas). Use quando o usuario precisar de algo juridico nao coberto pelas demais ferramentas. Procedimento em 4 passos.",
-				inputSchema: {},
+				description: "Procedimento curinga para demandas juridicas que nao se encaixam nas outras ferramentas (pareceres, contratos, manifestacoes diversas). Use quando o usuario precisar de algo nao coberto pelas demais. 4 etapas. Comece com etapa='1_inicio'.",
+				inputSchema: {
+					etapa: z.enum([
+						"1_inicio",
+						"2_perguntas",
+						"3_elaboracao",
+						"4_aprofundamento"
+					]).describe("Etapa do procedimento."),
+				},
 			},
-			async () => text(`${PROTOCOLO_PERSONA_JURIDICA}
+			async ({ etapa }) => {
+				const conteudos: Record<string, string> = {
+					"1_inicio": `${PROTOCOLO_PERSONA_JURIDICA}
 
-PROCEDIMENTO: Outros (curinga) - Passo 1 de 4.
+PROCEDIMENTO: OUTROS - Etapa 1 de 4 (inicio).
 
 PERGUNTE em qual problema o usuario precisa de ajuda. Por exemplo:
 - Peticao X
@@ -1358,71 +1098,77 @@ PERGUNTE em qual problema o usuario precisa de ajuda. Por exemplo:
 - Manifestacao
 - Outro
 
-INFORME que este procedimento serve para auxiliar quando a necessidade
-nao se encaixa nas demais ferramentas disponibilizadas.
+INFORME que este procedimento auxilia quando a necessidade nao se encaixa nas demais ferramentas.
 
 SUGIRA o modelo de comando:
-
 "Preciso fazer XXXXXXXXXXXX. Como voce pode me ajudar?"
 
-Apos a resposta, chame outros_passo2.`),
-		);
+PROXIMA ACAO: chame outros com etapa='2_perguntas'.`,
 
-		this.server.registerTool(
-			"outros_passo2",
-			{
-				description: "Passo 2 do procedimento outros.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Outros - Passo 2 de 4.
+					"2_perguntas": `PROCEDIMENTO: OUTROS - Etapa 2 de 4.
 
 SOLICITE que o usuario responda o maximo de perguntas geradas por voce.
 
-No final, INDIQUE estrategias para o exito do problema e ja SUGIRA
-outras acoes correlatas que podem ser uteis.
+No final, INDIQUE estrategias para o exito do problema e SUGIRA outras acoes correlatas uteis.
 
-Apos as respostas, chame outros_passo3.`),
-		);
+PROXIMA ACAO: chame outros com etapa='3_elaboracao'.`,
 
-		this.server.registerTool(
-			"outros_passo3",
-			{
-				description: "Passo 3 do procedimento outros. Elaboracao da peca.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Outros - Passo 3 de 4.
+					"3_elaboracao": `PROCEDIMENTO: OUTROS - Etapa 3 de 4.
 
 ELABORE a solicitacao pedida.
 - Faca em partes.
 - Obedeca aos requisitos formais aplicaveis.
 - NAO use a lousa.
 
-Apos concluir, chame outros_passo4.`),
-		);
+PROXIMA ACAO: chame outros com etapa='4_aprofundamento'.`,
 
-		this.server.registerTool(
-			"outros_passo4",
-			{
-				description: "Passo 4 (final) do procedimento outros. Aprofundamento.",
-				inputSchema: {},
-			},
-			async () => text(`PROCEDIMENTO: Outros - Passo 4 de 4 (FINAL).
+					"4_aprofundamento": `PROCEDIMENTO: OUTROS - Etapa 4 de 4 (FINAL).
 
 ${PROTOCOLO_DESENVOLVIMENTO_APROFUNDADO}
 
 Tambem TRANSCREVA os artigos mencionados citando a fonte do site do Planalto.
 
-Procedimento concluido.`),
+Procedimento concluido.`,
+				};
+				return text(conteudos[etapa]);
+			},
 		);
 
 	}
 }
+
+// ============================================================
+// AUTENTICACAO E ROUTING
+// ============================================================
 
 export default {
 	fetch(request: Request, env: Env, ctx: ExecutionContext) {
 		const url = new URL(request.url);
 
 		if (url.pathname === "/mcp") {
+			// Verifica token no header Authorization
+			const authHeader = request.headers.get("Authorization") || "";
+			const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+
+			if (!tokenValido(token)) {
+				return new Response(
+					JSON.stringify({
+						jsonrpc: "2.0",
+						error: {
+							code: -32001,
+							message: "Acesso nao autorizado. Token invalido ou expirado. Entre em contato com o administrador."
+						},
+						id: null
+					}),
+					{
+						status: 401,
+						headers: { "Content-Type": "application/json" }
+					}
+				);
+			}
+
+			// Token valido: registra log e processa
+			logUso(token, "request", "mcp_endpoint");
 			return MyMCP.serve("/mcp").fetch(request, env, ctx);
 		}
 
