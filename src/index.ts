@@ -9,19 +9,25 @@ import { z } from "zod";
 // Para revogar acesso: comente a linha (//) ou apague.
 // Apos qualquer alteracao, salve o arquivo (commit) que a Cloudflare
 // faz redeploy automatico em 1-2 minutos.
+// IMPORTANTE: o token vai aparecer na URL que voce envia ao aluno.
+// Por isso, mantenha tokens longos e dificeis de adivinhar.
+// Para revogar acesso, comente a linha (//) ou apague.
+// Apos qualquer alteracao, faca commit e a Cloudflare faz redeploy automatico.
 
 const TOKENS_AUTORIZADOS: Record<string, string> = {
-	// Padrao: "tok_TIPO_NOME_VALIDADE": "Descricao para sua referencia"
-	"tok_admin_joao_perpetuo": "Joao - acesso administrativo (voce mesmo)",
-	"tok_escritorio_1_122026": "Escritorio 1 - validade ate 12/2026",
-	"tok_escritorio_2_122026": "Escritorio 2 - validade ate 12/2026",
-	"tok_escritorio_3_122026": "Escritorio 3 - validade ate 12/2026",
-	"tok_escritorio_4_122026": "Escritorio 4 - validade ate 12/2026",
-	"tok_escritorio_5_122026": "Escritorio 5 - validade ate 12/2026",
-	"tok_curso_aluno_1_062027": "Aluno 1 - curso turma 2026 (validade 06/2027)",
-	"tok_curso_aluno_2_062027": "Aluno 2 - curso turma 2026 (validade 06/2027)",
-	"tok_curso_aluno_3_062027": "Aluno 3 - curso turma 2026 (validade 06/2027)",
-	"tok_curso_aluno_4_062027": "Aluno 4 - curso turma 2026 (validade 06/2027)",
+	// Token administrativo (voce mesmo)
+	"adm_joao_2026_xK9pL2mNqR8sT4vZ": "Joao - acesso administrativo",
+	// Tokens para escritorios (compartilhaveis entre advogados do mesmo escritorio)
+	"esc_001_2026_aB7cD3eF9gH2iJ5k": "Escritorio 1 - validade 12/2026",
+	"esc_002_2026_bC8dE4fG0hI3jK6l": "Escritorio 2 - validade 12/2026",
+	"esc_003_2026_cD9eF5gH1iJ4kL7m": "Escritorio 3 - validade 12/2026",
+	"esc_004_2026_dE0fG6hI2jK5lM8n": "Escritorio 4 - validade 12/2026",
+	"esc_005_2026_eF1gH7iJ3kL6mN9o": "Escritorio 5 - validade 12/2026",
+	// Tokens para alunos individuais do curso
+	"alu_001_2026_fG2hI8jK4lM7nO0p": "Aluno 1 - curso turma 2026 - validade 06/2027",
+	"alu_002_2026_gH3iJ9kL5mN8oP1q": "Aluno 2 - curso turma 2026 - validade 06/2027",
+	"alu_003_2026_hI4jK0lM6nO9pQ2r": "Aluno 3 - curso turma 2026 - validade 06/2027",
+	"alu_004_2026_iJ5kL1mN7oP0qR3s": "Aluno 4 - curso turma 2026 - validade 06/2027",
 };
 
 // ============================================================
@@ -1138,17 +1144,34 @@ Procedimento concluido.`,
 }
 
 // ============================================================
-// AUTENTICACAO E ROUTING
+// ROUTING E AUTENTICACAO
 // ============================================================
 
 export default {
 	fetch(request: Request, env: Env, ctx: ExecutionContext) {
 		const url = new URL(request.url);
+		const pathname = url.pathname;
 
-		if (url.pathname === "/mcp") {
-			// Verifica token no header Authorization
-			const authHeader = request.headers.get("Authorization") || "";
-			const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+		// Rota raiz: pagina informativa
+		if (pathname === "/" || pathname === "") {
+			return new Response(
+				`Servidor MCP - Inteligencia Artificial para Escritorios de Advocacia
+
+Para acessar este servico, voce precisa de uma URL personalizada com seu token de acesso.
+
+Formato: /mcp/SEU_TOKEN
+
+Caso nao tenha recebido sua URL, entre em contato com o administrador.`,
+				{
+					status: 200,
+					headers: { "Content-Type": "text/plain; charset=utf-8" }
+				}
+			);
+		}
+
+		// Rota /mcp/TOKEN: autentica via token na URL
+		if (pathname.startsWith("/mcp/")) {
+			const token = pathname.substring(5).split("/")[0]; // pega "/mcp/TOKEN" -> "TOKEN"
 
 			if (!tokenValido(token)) {
 				return new Response(
@@ -1169,7 +1192,17 @@ export default {
 
 			// Token valido: registra log e processa
 			logUso(token, "request", "mcp_endpoint");
-			return MyMCP.serve("/mcp").fetch(request, env, ctx);
+
+			// Reescreve a URL para que o MCP server interno trate como /mcp padrao
+			const novaUrl = new URL(request.url);
+			novaUrl.pathname = "/mcp";
+			const novaRequest = new Request(novaUrl.toString(), {
+				method: request.method,
+				headers: request.headers,
+				body: request.body,
+			});
+
+			return MyMCP.serve("/mcp").fetch(novaRequest, env, ctx);
 		}
 
 		return new Response("Not found", { status: 404 });
